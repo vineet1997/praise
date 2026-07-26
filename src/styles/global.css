@@ -141,6 +141,17 @@ button {
   text-shadow: 0 8px 38px rgba(0, 0, 0, 0.58);
 }
 
+.opening-salutation {
+  margin: 0 0 0.72rem;
+  color: rgba(238, 210, 172, 0.86);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(1.08rem, 1.7vw, 1.56rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  text-shadow: 0 5px 24px rgba(0, 0, 0, 0.48);
+}
+
 .opening-word {
   display: inline-block;
 }

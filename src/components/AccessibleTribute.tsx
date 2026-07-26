@@ -3,7 +3,7 @@ import { tribute } from "../content/tribute";
 export function AccessibleTribute() {
   return (
     <article className="sr-only" aria-label={`A tribute to ${tribute.recipient}`}>
-      <h1>{tribute.openingMessage}</h1>
+      <h1>{`${tribute.openingSalutation} ${tribute.openingMessage}`}</h1>
       {tribute.poemLines.map((line) => (
         <p key={line.text}>{line.text}</p>
       ))}

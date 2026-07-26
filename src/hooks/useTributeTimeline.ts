@@ -35,12 +35,14 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
 
       const stage = root.querySelector<HTMLElement>(".visual-stage");
       const universe = root.querySelector<HTMLElement>(".word-field");
+      const opening = root.querySelector<HTMLElement>(".opening");
+      const salutation = root.querySelector<HTMLElement>(".opening-salutation");
       const intro = root.querySelector<HTMLElement>(".opening-message");
       const instruction = root.querySelector<HTMLElement>(".scroll-instruction");
       const poem = root.querySelector<HTMLElement>(".poem-stage");
       const final = root.querySelector<HTMLElement>(".final-dedication");
       const cloud = root.querySelector<HTMLElement>(".convergence-cloud");
-      if (!stage || !universe || !intro || !instruction || !poem || !final || !cloud) {
+      if (!stage || !universe || !opening || !salutation || !intro || !instruction || !poem || !final || !cloud) {
         return;
       }
 
@@ -62,7 +64,7 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           };
 
           if (reduced || !animated) {
-            gsap.set([intro, instruction, universe, poem, final], {
+            gsap.set([opening, instruction, universe, poem, final], {
               clearProps: "all",
               opacity: 1,
               visibility: "visible",
@@ -82,6 +84,7 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           });
 
           gsap.set(openingSplit.words, { opacity: 0.88, yPercent: 0 });
+          gsap.set(salutation, { opacity: 0, y: 8 });
           gsap.set(instruction, { opacity: 0.68, y: 0 });
           gsap.set(poem, { opacity: 1 });
           gsap.set(lines, { opacity: 0, y: 16, filter: "blur(5px)" });
@@ -116,6 +119,12 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           });
 
           timeline
+            .to(salutation, {
+              opacity: 0.86,
+              y: 0,
+              duration: 1.5,
+              ease: "power2.out",
+            }, 0)
             .to(openingSplit.words, {
               opacity: 1,
               yPercent: 0,
@@ -143,7 +152,7 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
 
           timeline
             .to(instruction, { opacity: 0, duration: 1.2 }, 8.5)
-            .to(intro, { opacity: 0, y: -18, duration: 2 }, 12)
+            .to(opening, { opacity: 0, y: -18, duration: 2 }, 12)
             .to(".cosmic-backdrop", { opacity: 1, duration: 13 }, 18);
 
           words.forEach((word, index) => {

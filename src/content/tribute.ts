@@ -17,6 +17,7 @@ export type TributeLine = {
 export type TributeContent = {
   recipient: string;
   sender: string;
+  openingSalutation: string;
   openingMessage: string;
   scrollInstruction: string;
   floatingWords: string[];
@@ -33,6 +34,7 @@ export type TributeContent = {
 export const tribute: TributeContent = {
   recipient: "Priya",
   sender: "Vineet",
+  openingSalutation: "Mon Cheri,",
   openingMessage: "There are too many ways to describe you.",
   scrollInstruction: "Scroll slowly.",
   floatingWords: [

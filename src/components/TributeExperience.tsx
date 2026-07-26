@@ -22,6 +22,7 @@ export function TributeExperience() {
         <CosmicBackdrop />
         <FloatingWordField />
         <div className="opening" aria-hidden="true">
+          <p className="opening-salutation">{tribute.openingSalutation}</p>
           <p className="opening-message">{tribute.openingMessage}</p>
           <p className="scroll-instruction">
             {tribute.scrollInstruction}
