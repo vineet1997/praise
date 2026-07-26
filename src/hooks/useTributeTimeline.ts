@@ -144,8 +144,7 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           timeline
             .to(instruction, { opacity: 0, duration: 1.2 }, 8.5)
             .to(intro, { opacity: 0, y: -18, duration: 2 }, 12)
-            .to(".aurora__veil--rose", { opacity: 0.8, scale: 1.12, duration: 13 }, 18)
-            .to(".aurora__veil--gold", { opacity: 0.66, scale: 1.08, duration: 13 }, 21);
+            .to(".cosmic-backdrop", { opacity: 1, duration: 13 }, 18);
 
           words.forEach((word, index) => {
             const phase = Number(
@@ -290,7 +289,6 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           timeline
             .to(poem, { opacity: 0.14, filter: "blur(2px)", duration: 3.3 }, 86)
             .to(cloud, { opacity: 0.8, scale: 1, duration: 3.8, ease: "power2.out" }, 89)
-            .to(".aurora__veil", { opacity: 0.9, duration: 3.5 }, 89)
             .to(cloud, { opacity: 0, scale: 1.16, duration: 2.4 }, 94)
             .to(words, { opacity: 0, duration: 1.8 }, 94)
             .to(poem, { opacity: 0, duration: 1.8 }, 94)

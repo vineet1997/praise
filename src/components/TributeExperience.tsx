@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { tribute } from "../content/tribute";
 import { useTributeTimeline } from "../hooks/useTributeTimeline";
 import { AccessibleTribute } from "./AccessibleTribute";
-import { AuroraBackground } from "./AuroraBackground";
+import { CosmicBackdrop } from "./CosmicBackdrop";
 import { FinalDedication } from "./FinalDedication";
 import { FloatingWordField } from "./FloatingWordField";
 import { PoemStage } from "./PoemStage";
@@ -19,7 +19,7 @@ export function TributeExperience() {
     <main className="tribute-experience" ref={root}>
       <AccessibleTribute />
       <section className="visual-stage" aria-label={`A tribute to ${tribute.recipient}`}>
-        <AuroraBackground />
+        <CosmicBackdrop />
         <FloatingWordField />
         <div className="opening" aria-hidden="true">
           <p className="opening-message">{tribute.openingMessage}</p>
