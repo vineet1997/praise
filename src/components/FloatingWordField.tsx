@@ -24,7 +24,7 @@ const featuredWords = new Set([
   "magnetic",
   "strong",
   "thoughtful",
-  "intelligent",
+  "intelligence",
 ]);
 
 const safeZones = [

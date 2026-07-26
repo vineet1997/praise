@@ -62,14 +62,38 @@ const atmosphereFragment = /* glsl */ `
     return value;
   }
 
-  float ribbon(vec2 p, float offset, float frequency, float phase, float width, float warp) {
-    float wave = sin(p.x * frequency + phase) * 0.13;
-    wave += sin(p.x * frequency * 0.47 - phase * 0.63) * 0.07;
-    wave += (fbm(vec2(p.x * 0.72 + phase * 0.08, p.y * 0.9 - phase * 0.04)) - 0.5) * warp;
-    float distanceToBand = abs(p.y - offset - wave);
-    float core = exp(-distanceToBand * distanceToBand / max(width * width, 0.0001));
-    float veil = exp(-distanceToBand * 4.2) * 0.18;
-    return core + veil;
+  float particulateVeil(
+    vec2 uv,
+    vec2 origin,
+    vec2 direction,
+    float bend,
+    float phase,
+    float width
+  ) {
+    vec2 axis = normalize(direction);
+    vec2 normal = vec2(-axis.y, axis.x);
+    vec2 local = uv - origin;
+    float along = dot(local, axis);
+    float across = dot(local, normal);
+
+    float broadWarp = fbm(vec2(along * 1.7 + phase * 0.07, across * 1.2 - phase * 0.04));
+    float fold = sin(along * 4.1 + phase) * 0.045;
+    fold += sin(along * 8.7 - phase * 0.54) * 0.018;
+    fold += (broadWarp - 0.5) * 0.12 + bend * along * along;
+
+    float distanceToFold = abs(across - fold);
+    float envelope = exp(-distanceToFold * distanceToFold / max(width * width, 0.0001));
+    float entry = smoothstep(-0.03, 0.12, along);
+    float exit = 1.0 - smoothstep(0.42, 0.78, along);
+
+    float particulate = fbm(vec2(along * 8.4 - phase * 0.12, (across - fold) * 26.0 + phase));
+    float dust = smoothstep(0.48, 0.86, particulate);
+    float threads = pow(
+      0.5 + 0.5 * sin((across - fold) * 92.0 + broadWarp * 11.0 + phase),
+      9.0
+    );
+    float translucentBody = envelope * (0.18 + dust * 0.54 + threads * 0.24);
+    return translucentBody * entry * exit;
   }
 
   void main() {
@@ -83,24 +107,47 @@ const atmosphereFragment = /* glsl */ `
 
     float domainA = fbm(p * 1.18 + vec2(motion * 0.025, -motion * 0.014));
     float domainB = fbm(p * 2.6 + vec2(-motion * 0.017, motion * 0.021) + domainA * 1.7);
-    vec2 warped = p + vec2(domainA - 0.5, domainB - 0.5) * mix(0.17, 0.055, uStillness);
+    vec2 veilUv = uv + uPointer * vec2(0.012, 0.008) * (1.0 - uStillness);
+    veilUv += vec2(domainA - 0.5, domainB - 0.5) * mix(0.025, 0.009, uStillness);
 
-    float roseBand = ribbon(warped, -0.24 + uProgress * 0.09, 2.15, motion * 0.11 + 0.6, 0.020, 0.30);
-    float goldBand = ribbon(warped, 0.18 - uProgress * 0.11, 1.68, -motion * 0.085 + 2.4, 0.017, 0.27);
-    float lavenderBand = ribbon(warped, -0.02, 2.72, motion * 0.068 + 4.8, 0.013, 0.22);
+    float roseVeil = particulateVeil(
+      veilUv,
+      vec2(-0.08, 0.02),
+      vec2(0.84, 0.37),
+      -0.09,
+      motion * 0.055 + 1.1,
+      0.17
+    );
+    float goldVeil = particulateVeil(
+      veilUv,
+      vec2(1.08, 1.04),
+      vec2(-0.82, -0.31),
+      0.08,
+      -motion * 0.046 + 3.2,
+      0.16
+    );
+    float lavenderVeil = particulateVeil(
+      veilUv,
+      vec2(1.08, -0.04),
+      vec2(-0.86, 0.34),
+      0.07,
+      motion * 0.042 + 5.6,
+      0.18
+    );
 
-    float edgeMask = smoothstep(0.02, 0.24, abs(p.y) + abs(p.x) * 0.10);
-    float centerQuiet = mix(1.0, smoothstep(0.07, 0.42, length(p * vec2(0.72, 1.0))), smoothstep(0.36, 0.54, uProgress));
+    float readingZone = smoothstep(0.20, 0.53, length((uv - 0.5) * vec2(1.28, 1.0)));
+    float poemQuiet = smoothstep(0.34, 0.47, uProgress) * (1.0 - smoothstep(0.81, 0.87, uProgress));
+    float centerQuiet = mix(1.0, readingZone, poemQuiet * 0.96);
     float auroraPower = mix(0.64, 1.28, uEnergy) * mix(1.0, 0.72, uStillness);
 
     vec3 rose = mix(vec3(0.34, 0.055, 0.11), vec3(0.76, 0.22, 0.36), uWarmth);
     vec3 gold = mix(vec3(0.34, 0.20, 0.085), vec3(0.96, 0.61, 0.25), uWarmth);
     vec3 lavender = mix(vec3(0.18, 0.12, 0.28), vec3(0.55, 0.34, 0.77), uWarmth);
 
-    vec3 aurora = rose * roseBand * 0.84;
-    aurora += gold * goldBand * 0.78;
-    aurora += lavender * lavenderBand * 0.72;
-    aurora *= auroraPower * mix(0.62, 1.0, edgeMask) * centerQuiet;
+    vec3 aurora = rose * roseVeil * 1.86;
+    aurora += gold * goldVeil * 1.72;
+    aurora += lavender * lavenderVeil * 1.68;
+    aurora *= auroraPower * centerQuiet;
 
     float nebula = smoothstep(0.32, 0.82, domainB) * (0.16 + uEnergy * 0.22);
     float halo = exp(-length(p * vec2(0.74, 1.0)) * 2.9) * mix(0.08, 0.20, uWarmth);

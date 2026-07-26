@@ -179,17 +179,33 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
           const simpleLines = lines.filter(
             (_, index) => index < 6,
           );
+          const simpleSources = simpleLines.map((line) => {
+            const key = line.querySelector<HTMLElement>(".poem-line__key")?.dataset.poemKey;
+            return key ? sourceWords.get(key) : undefined;
+          });
+          const ambientPoemOpacity = (element: HTMLElement) => {
+            const rect = element.getBoundingClientRect();
+            const x = (rect.left + rect.width / 2) / Math.max(window.innerWidth, 1);
+            const y = (rect.top + rect.height / 2) / Math.max(window.innerHeight, 1);
+            const insideReadingZone = x > 0.2 && x < 0.8 && y > 0.12 && y < 0.88;
+            return insideReadingZone ? 0 : 0.12;
+          };
           simpleLines.forEach((line, index) => {
             const start = 40 + index * 4.25;
             const keyTarget = line.querySelector<HTMLElement>(".poem-line__key");
             const key = keyTarget?.dataset.poemKey;
             const source = key ? sourceWords.get(key) : undefined;
+            const consumedSources = new Set(simpleSources.slice(0, index));
 
             timeline.to(
               words,
               {
                 opacity: (_i, element: HTMLElement) =>
-                  element === source ? 0.94 : Math.max(0.1, 0.42 - index * 0.04),
+                  element === source
+                    ? 0.94
+                    : consumedSources.has(element)
+                      ? 0
+                      : ambientPoemOpacity(element),
                 duration: 1.15,
                 stagger: { each: 0.006, from: "center" },
               },
@@ -232,8 +248,8 @@ export function useTributeTimeline({ scope }: TimelineOptions) {
                   },
                   start + 0.2,
                 )
-                .set(keyTarget, { opacity: 1 }, start + 2.22)
-                .set(source, { opacity: 0 }, start + 2.22);
+                .set(keyTarget, { opacity: 1 }, start + 2.34)
+                .set(source, { opacity: 0 }, start + 2.34);
             }
           });
 

@@ -38,7 +38,7 @@ export const tribute: TributeContent = {
   floatingWords: [
     "beautiful",
     "brilliant",
-    "intelligent",
+    "intelligence",
     "thoughtful",
     "strong",
     "fierce",
@@ -96,6 +96,7 @@ export const tribute: TributeContent = {
     "the calm",
     "the fire",
     "worth remembering",
+    "kindness",
   ],
   poemLines: [
     {
@@ -134,15 +135,15 @@ export const tribute: TributeContent = {
       section: "simple",
     },
     {
-      text: "You are intelligent in ways that keep surprising me.",
-      keyWord: "intelligent",
+      text: "You keep surprising me with the depth and breadth of your intelligence.",
+      keyWord: "intelligence",
       emphasis: "strong",
       reveal: "tighten",
       section: "simple",
     },
     {
-      text: "You make intelligence look effortless.",
-      keyWord: "intelligence",
+      text: "You make kindness look effortless.",
+      keyWord: "kindness",
       emphasis: "medium",
       reveal: "mask",
       section: "personal",
